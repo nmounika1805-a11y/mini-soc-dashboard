@@ -1,3 +1,4 @@
+
 package com.minisoc.backend.controller;
 
 import com.minisoc.backend.model.User;
@@ -83,16 +84,32 @@ public class AuthController {
 
         user.setName(name.trim());
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(
+                passwordEncoder.encode(password)
+        );
         user.setRole("USER");
 
-        User savedUser = userRepository.save(user);
+        User savedUser =
+                userRepository.save(user);
 
-        session.setAttribute("userId", savedUser.getId());
-        session.setAttribute("userName", savedUser.getName());
-        session.setAttribute("userRole", savedUser.getRole());
+        session.setAttribute(
+                "userId",
+                savedUser.getId()
+        );
 
-        return ResponseEntity.ok(userResponse(savedUser));
+        session.setAttribute(
+                "userName",
+                savedUser.getName()
+        );
+
+        session.setAttribute(
+                "userRole",
+                savedUser.getRole()
+        );
+
+        return ResponseEntity.ok(
+                userResponse(savedUser)
+        );
     }
 
     @PostMapping("/login")
@@ -117,9 +134,10 @@ public class AuthController {
 
         email = email.trim().toLowerCase();
 
-        User user = userRepository
-                .findByEmailIgnoreCase(email)
-                .orElse(null);
+        User user =
+                userRepository
+                        .findByEmailIgnoreCase(email)
+                        .orElse(null);
 
         if (user == null) {
 
@@ -136,31 +154,53 @@ public class AuthController {
 
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(message("Incorrect password."));
+                    .body(message(
+                            "Incorrect password."
+                    ));
         }
 
-        session.setAttribute("userId", user.getId());
-        session.setAttribute("userName", user.getName());
-        session.setAttribute("userRole", user.getRole());
+        session.setAttribute(
+                "userId",
+                user.getId()
+        );
 
-        return ResponseEntity.ok(userResponse(user));
+        session.setAttribute(
+                "userName",
+                user.getName()
+        );
+
+        session.setAttribute(
+                "userRole",
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(
+                userResponse(user)
+        );
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> currentUser(HttpSession session) {
+    public ResponseEntity<?> currentUser(
+            HttpSession session) {
 
         Long userId =
-                (Long) session.getAttribute("userId");
+                (Long) session.getAttribute(
+                        "userId"
+                );
 
         if (userId == null) {
 
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(message("Not logged in."));
+                    .body(message(
+                            "Not logged in."
+                    ));
         }
 
         User user =
-                userRepository.findById(userId).orElse(null);
+                userRepository
+                        .findById(userId)
+                        .orElse(null);
 
         if (user == null) {
 
@@ -168,43 +208,75 @@ public class AuthController {
 
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body(message("User session is invalid."));
+                    .body(message(
+                            "User session is invalid."
+                    ));
         }
 
-        return ResponseEntity.ok(userResponse(user));
+        return ResponseEntity.ok(
+                userResponse(user)
+        );
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
+    public ResponseEntity<?> logout(
+            HttpSession session) {
 
         session.invalidate();
 
         return ResponseEntity.ok(
-                message("Logged out successfully.")
+                message(
+                        "Logged out successfully."
+                )
         );
     }
 
-    private Map<String, Object> userResponse(User user) {
+    private Map<String, Object> userResponse(
+            User user) {
 
         Map<String, Object> response =
                 new HashMap<>();
 
-        response.put("id", user.getId());
-        response.put("name", user.getName());
-        response.put("email", user.getEmail());
-        response.put("role", user.getRole());
-        response.put("createdAt", user.getCreatedAt());
+        response.put(
+                "id",
+                user.getId()
+        );
+
+        response.put(
+                "name",
+                user.getName()
+        );
+
+        response.put(
+                "email",
+                user.getEmail()
+        );
+
+        response.put(
+                "role",
+                user.getRole()
+        );
+
+        response.put(
+                "createdAt",
+                user.getCreatedAt()
+        );
 
         return response;
     }
 
-    private Map<String, String> message(String text) {
+    private Map<String, String> message(
+            String text) {
 
         Map<String, String> response =
                 new HashMap<>();
 
-        response.put("message", text);
+        response.put(
+                "message",
+                text
+        );
 
         return response;
     }
 }
+

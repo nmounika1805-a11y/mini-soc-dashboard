@@ -30,19 +30,23 @@ public class AlertController {
 
     private final AlertRepository alertRepository;
 
-    public AlertController(AlertRepository alertRepository) {
+    public AlertController(
+            AlertRepository alertRepository) {
+
         this.alertRepository = alertRepository;
     }
 
     @GetMapping
-    public ResponseEntity<?> getAlerts(HttpSession session) {
+    public ResponseEntity<?> getAlerts(
+            HttpSession session) {
 
         if (!isLoggedIn(session)) {
             return unauthorized();
         }
 
         List<Alert> alerts =
-                alertRepository.findAllByOrderByTimeDesc();
+                alertRepository
+                        .findAllByOrderByTimeDesc();
 
         return ResponseEntity.ok(alerts);
     }
@@ -57,18 +61,26 @@ public class AlertController {
         }
 
         if (isEmpty(alert.getTitle())) {
-            return badRequest("Alert title is required.");
+            return badRequest(
+                    "Alert title is required."
+            );
         }
 
         if (isEmpty(alert.getSeverity())) {
-            return badRequest("Severity is required.");
+            return badRequest(
+                    "Severity is required."
+            );
         }
 
         if (isEmpty(alert.getStatus())) {
-            return badRequest("Status is required.");
+            return badRequest(
+                    "Status is required."
+            );
         }
 
-        alert.setTitle(alert.getTitle().trim());
+        alert.setTitle(
+                alert.getTitle().trim()
+        );
 
         alert.setSeverity(
                 alert.getSeverity()
@@ -98,7 +110,9 @@ public class AlertController {
                 safe(alert.getNote())
         );
 
-        alert.setTime(LocalDateTime.now());
+        alert.setTime(
+                LocalDateTime.now()
+        );
 
         Alert saved =
                 alertRepository.save(alert);
@@ -124,21 +138,32 @@ public class AlertController {
                         .orElse(null);
 
         if (existing == null) {
+
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(message("Alert not found."));
+                    .body(
+                            message(
+                                    "Alert not found."
+                            )
+                    );
         }
 
         if (isEmpty(updated.getTitle())) {
-            return badRequest("Alert title is required.");
+            return badRequest(
+                    "Alert title is required."
+            );
         }
 
         if (isEmpty(updated.getSeverity())) {
-            return badRequest("Severity is required.");
+            return badRequest(
+                    "Severity is required."
+            );
         }
 
         if (isEmpty(updated.getStatus())) {
-            return badRequest("Status is required.");
+            return badRequest(
+                    "Status is required."
+            );
         }
 
         existing.setTitle(
@@ -189,31 +214,44 @@ public class AlertController {
         }
 
         if (!alertRepository.existsById(id)) {
+
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body(message("Alert not found."));
+                    .body(
+                            message(
+                                    "Alert not found."
+                            )
+                    );
         }
 
         alertRepository.deleteById(id);
 
         return ResponseEntity.ok(
-                message("Alert deleted successfully.")
+                message(
+                        "Alert deleted successfully."
+                )
         );
     }
 
-    private boolean isLoggedIn(HttpSession session) {
+    private boolean isLoggedIn(
+            HttpSession session) {
 
-        return session.getAttribute("userId") != null;
+        return session.getAttribute(
+                "userId"
+        ) != null;
     }
 
-    private boolean isAdmin(HttpSession session) {
+    private boolean isAdmin(
+            HttpSession session) {
 
         if (!isLoggedIn(session)) {
             return false;
         }
 
         Object role =
-                session.getAttribute("userRole");
+                session.getAttribute(
+                        "userRole"
+                );
 
         return role != null &&
                 "ADMIN".equalsIgnoreCase(
@@ -225,46 +263,59 @@ public class AlertController {
 
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(message(
-                        "Please login to access the dashboard."
-                ));
+                .body(
+                        message(
+                                "Please login to access the dashboard."
+                        )
+                );
     }
 
     private ResponseEntity<?> forbidden() {
 
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(message(
-                        "Admin access required."
-                ));
+                .body(
+                        message(
+                                "Admin access required."
+                        )
+                );
     }
 
-    private ResponseEntity<?> badRequest(String text) {
+    private ResponseEntity<?> badRequest(
+            String text) {
 
         return ResponseEntity
                 .badRequest()
-                .body(message(text));
+                .body(
+                        message(text)
+                );
     }
 
-    private boolean isEmpty(String value) {
+    private boolean isEmpty(
+            String value) {
 
         return value == null ||
                 value.trim().isEmpty();
     }
 
-    private String safe(String value) {
+    private String safe(
+            String value) {
 
         return value == null
                 ? ""
                 : value.trim();
     }
 
-    private Map<String, String> message(String text) {
+    private Map<String, String> message(
+            String text) {
 
         Map<String, String> response =
                 new HashMap<>();
 
-        response.put("message", text);
+        response.put(
+                "message",
+                text
+        );
 
         return response;
     }
