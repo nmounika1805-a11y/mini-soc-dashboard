@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mini SOC | Security Operations Center</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =========================
+     TOP NAVIGATION
+========================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            🛡️
+        </div>
+
+        <div class="brand-text">
+            <h2>MINI SOC</h2>
+            <span>Security Operations Center</span>
+        </div>
+
+    </div>
+
+
+    <div class="top-status">
+
+        <div class="connection-status">
+            <span class="status-dot"></span>
+            SYSTEM ONLINE
+        </div>
+
+        <div class="live-time" id="liveClock">
+            --:--:--
+        </div>
+
+        <div class="user-info">
+
+            <span id="welcomeUser">
+                Loading...
+            </span>
+
+            <span id="roleBadge" class="role-badge">
+            </span>
+
+        </div>
+
+        <button
+            id="logoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================
+     MAIN DASHBOARD
+========================= -->
+
+<main class="dashboard">
+
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
+        <div>
+
+            <div class="eyebrow">
+                SECURITY MONITORING
+            </div>
+
+            <h1>
+                Security Dashboard
+            </h1>
+
+            <p>
+                Monitor threats, investigate alerts and track your security posture.
+            </p>
+
+        </div>
+
+
+        <div class="header-actions">
+
+            <button
+                id="refreshButton"
+                class="secondary-button"
+            >
+                ↻ Refresh
+            </button>
+
+            <button
+                id="addAlertButton"
+                class="primary-button hidden"
+            >
+                + Add Alert
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================= -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                ◉
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    TOTAL ALERTS
+                </span>
+
+                <strong id="totalAlerts">
+                    0
+                </strong>
+
+                <small>
+                    All security events
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon orange">
+                !
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    ACTIVE THREATS
+                </span>
+
+                <strong id="activeAlerts">
+                    0
+                </strong>
+
+                <small>
+                    Require attention
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon red">
+                ⚠
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    CRITICAL
+                </span>
+
+                <strong id="criticalAlerts">
+                    0
+                </strong>
+
+                <small>
+                    High priority events
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                ✓
+            </div>
+
+            <div class="stat-content">
+
+                <span>
+                    RESOLVED
+                </span>
+
+                <strong id="resolvedAlerts">
+                    0
+                </strong>
+
+                <small>
+                    Successfully handled
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         SECURITY OVERVIEW
+    ========================= -->
+
+    <section class="overview-grid">
+
+
+        <!-- HEALTH -->
+
+        <div class="panel health-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        SECURITY POSTURE
+                    </span>
+
+                    <h2>
+                        Security Health
+                    </h2>
+
+                </div>
+
+                <span
+                    id="healthBadge"
+                    class="health-badge"
+                >
+                    HEALTHY
+                </span>
+
+            </div>
+
+
+            <div class="health-content">
+
+                <div class="health-ring-wrapper">
+
+                    <div
+                        id="healthRing"
+                        class="health-ring"
+                    >
+
+                        <div class="health-ring-inner">
+
+                            <strong id="healthPercentage">
+                                100%
+                            </strong>
+
+                            <span>
+                                HEALTH
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="health-info">
+
+                    <h3 id="healthStatus">
+                        Excellent
+                    </h3>
+
+                    <p id="healthMessage">
+                        Security environment is currently healthy.
+                    </p>
+
+                    <div class="health-legend">
+
+                        <span>
+                            <i class="legend-dot healthy-dot"></i>
+                            Healthy
+                        </span>
+
+                        <span>
+                            <i class="legend-dot warning-dot"></i>
+                            Monitor
+                        </span>
+
+                        <span>
+                            <i class="legend-dot danger-dot"></i>
+                            Critical
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- THREAT OVERVIEW -->
+
+        <div class="panel threat-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-label">
+                        THREAT ANALYSIS
+                    </span>
+
+                    <h2>
+                        Threat Distribution
+                    </h2>
+
+                </div>
+
+                <span
+                    id="securityState"
+                    class="security-state"
+                >
+                    STABLE
+                </span>
+
+            </div>
+
+
+            <div class="threat-list">
+
+
+                <div class="threat-row">
+
+                    <div class="threat-name">
+                        <span class="threat-dot critical-dot"></span>
+                        Critical
+                    </div>
+
+                    <strong id="criticalCountSmall">
+                        0
+                    </strong>
+
+                    <div class="threat-bar">
+                        <span id="criticalBar"></span>
+                    </div>
+
+                </div>
+
+
+                <div class="threat-row">
+
+                    <div class="threat-name">
+                        <span class="threat-dot high-dot"></span>
+                        High
+                    </div>
+
+                    <strong id="highCountSmall">
+                        0
+                    </strong>
+
+                    <div class="threat-bar">
+                        <span id="highBar"></span>
+                    </div>
+
+                </div>
+
+
+                <div class="threat-row">
+
+                    <div class="threat-name">
+                        <span class="threat-dot medium-dot"></span>
+                        Medium
+                    </div>
+
+                    <strong id="mediumCountSmall">
+                        0
+                    </strong>
+
+                    <div class="threat-bar">
+                        <span id="mediumBar"></span>
+                    </div>
+
+                </div>
+
+
+                <div class="threat-row">
+
+                    <div class="threat-name">
+                        <span class="threat-dot low-dot"></span>
+                        Low
+                    </div>
+
+                    <strong id="lowCountSmall">
+                        0
+                    </strong>
+
+                    <div class="threat-bar">
+                        <span id="lowBar"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         ALERT SECTION
+    ========================= -->
+
+    <section class="alerts-panel">
+
+
+        <div class="alerts-header">
+
+            <div>
+
+                <span class="panel-label">
+                    INCIDENT MANAGEMENT
+                </span>
+
+                <h2>
+                    Security Alerts
+                </h2>
+
+                <p>
+                    Investigate and manage detected security events.
+                </p>
+
+            </div>
+
+
+            <div class="alert-summary">
+
+                <span class="live-indicator"></span>
+
+                <span id="alertCount">
+                    0 alerts
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- FILTER TOOLBAR -->
+
+        <div class="filter-toolbar">
+
+            <div class="search-box">
+
+                <span>
+                    🔍
+                </span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search alerts, IP addresses or descriptions..."
+                >
+
+            </div>
+
+
+            <select id="severityFilter">
+
+                <option value="ALL">
+                    All Severity
+                </option>
+
+                <option value="CRITICAL">
+                    Critical
+                </option>
+
+                <option value="HIGH">
+                    High
+                </option>
+
+                <option value="MEDIUM">
+                    Medium
+                </option>
+
+                <option value="LOW">
+                    Low
+                </option>
+
+            </select>
+
+
+            <select id="statusFilter">
+
+                <option value="ALL">
+                    All Status
+                </option>
+
+                <option value="ACTIVE">
+                    Active
+                </option>
+
+                <option value="RESOLVED">
+                    Resolved
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loading"
+            class="loading"
+        >
+            <div class="loading-spinner"></div>
+            Loading security alerts...
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="errorMessage"
+            class="error-message hidden"
+        >
+        </div>
+
+
+        <!-- TABLE -->
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            SECURITY EVENT
+                        </th>
+
+                        <th>
+                            SEVERITY
+                        </th>
+
+                        <th>
+                            STATUS
+                        </th>
+
+                        <th>
+                            SOURCE
+                        </th>
+
+                        <th>
+                            DESTINATION
+                        </th>
+
+                        <th>
+                            DETECTED
+                        </th>
+
+                        <th>
+                            ACTION
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="alertsTableBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================
+     ADD / EDIT MODAL
+========================= -->
+
+<div
+    id="alertModal"
+    class="modal hidden"
+>
+
+    <div class="modal-card">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="panel-label">
+                    INCIDENT MANAGEMENT
+                </span>
+
+                <h2 id="modalTitle">
+                    Add Alert
+                </h2>
+
+            </div>
+
+            <button
+                id="closeModalButton"
+                class="close-button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="alertForm">
+
+            <input
+                type="hidden"
+                id="alertId"
+            >
+
+
+            <div class="form-grid">
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Alert Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="alertTitle"
+                        placeholder="Example: Suspicious SSH Login"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Severity
+                    </label>
+
+                    <select
+                        id="alertSeverity"
+                        required
+                    >
+
+                        <option value="CRITICAL">
+                            Critical
+                        </option>
+
+                        <option value="HIGH">
+                            High
+                        </option>
+
+                        <option value="MEDIUM">
+                            Medium
+                        </option>
+
+                        <option value="LOW">
+                            Low
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Status
+                    </label>
+
+                    <select
+                        id="alertStatus"
+                        required
+                    >
+
+                        <option value="ACTIVE">
+                            Active
+                        </option>
+
+                        <option value="RESOLVED">
+                            Resolved
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Source IP
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sourceIp"
+                        placeholder="192.168.1.10"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Destination IP
+                    </label>
+
+                    <input
+                        type="text"
+                        id="destinationIp"
+                        placeholder="10.0.0.20"
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        id="alertDescription"
+                        rows="4"
+                        placeholder="Describe the detected security event..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        Investigation Note
+                    </label>
+
+                    <textarea
+                        id="alertNote"
+                        rows="4"
+                        placeholder="Add investigation findings or response notes..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <p
+                id="modalMessage"
+                class="modal-message"
+            >
+            </p>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelModalButton"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Save Alert
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     VIEW ALERT MODAL
+========================= -->
+
+<div
+    id="viewModal"
+    class="modal hidden"
+>
+
+    <div class="modal-card view-card">
+
+
+        <div class="modal-header">
+
+            <div>
+
+                <span class="panel-label">
+                    SECURITY INCIDENT
+                </span>
+
+                <h2>
+                    Alert Details
+                </h2>
+
+            </div>
+
+            <button
+                id="closeViewButton"
+                class="close-button"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            id="viewContent"
+            class="alert-details"
+        >
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script src="dashboard.js"></script>
+
+</body>
+
+</html>
