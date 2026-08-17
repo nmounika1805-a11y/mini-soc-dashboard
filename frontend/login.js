@@ -1,100 +1,164 @@
-const API_BASE = "http://127.0.0.1:8080/api";
+/* =========================================
+   API CONFIGURATION
+========================================= */
 
-const loginForm = document.getElementById("loginForm");
-const message = document.getElementById("message");
-const loginButton = document.getElementById("loginButton");
+const API_BASE =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+        ? "http://127.0.0.1:8080/api"
+        : "https://mini-soc-security.onrender.com/api";
 
-loginForm.addEventListener("submit", async function (event) {
 
-    event.preventDefault();
+/* =========================================
+   ELEMENTS
+========================================= */
 
-    const email =
-        document.getElementById("email").value.trim();
+const loginForm =
+    document.getElementById("loginForm");
 
-    const password =
-        document.getElementById("password").value;
+const message =
+    document.getElementById("message");
 
-    message.textContent = "";
+const loginButton =
+    document.getElementById("loginButton");
 
-    if (!email || !password) {
+
+/* =========================================
+   LOGIN
+========================================= */
+
+loginForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const email =
+            document.getElementById(
+                "email"
+            ).value.trim();
+
+
+        const password =
+            document.getElementById(
+                "password"
+            ).value;
+
 
         message.textContent =
-            "Please enter email and password.";
+            "";
 
-        message.style.color = "#ff6b6b";
 
-        return;
-    }
-
-    loginButton.disabled = true;
-    loginButton.textContent = "Logging in...";
-
-    try {
-
-        const response = await fetch(
-            `${API_BASE}/auth/login`,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                credentials: "include",
-
-                body: JSON.stringify({
-                    email: email,
-                    password: password
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
+        if (!email || !password) {
 
             message.textContent =
-                data.message || "Login failed.";
+                "Please enter email and password.";
 
-            message.style.color = "#ff6b6b";
-
-            loginButton.disabled = false;
-            loginButton.textContent = "Login";
+            message.style.color =
+                "#ff6b6b";
 
             return;
         }
 
-        message.textContent =
-            "Login successful!";
 
-        message.style.color = "#4ade80";
+        loginButton.disabled =
+            true;
 
-        /*
-         * Redirect using the actual frontend URL.
-         * This avoids problems caused by relative paths.
-         */
-        setTimeout(function () {
+        loginButton.textContent =
+            "Logging in...";
 
-            window.location.replace(
-                window.location.origin +
-                window.location.pathname.replace(
-                    "login.html",
-                    "index.html"
-                )
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_BASE}/auth/login`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        credentials:
+                            "include",
+
+                        body:
+                            JSON.stringify({
+                                email:
+                                    email,
+
+                                password:
+                                    password
+                            })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                message.textContent =
+                    data.message ||
+                    "Login failed.";
+
+                message.style.color =
+                    "#ff6b6b";
+
+                loginButton.disabled =
+                    false;
+
+                loginButton.textContent =
+                    "Login";
+
+                return;
+            }
+
+
+            message.textContent =
+                "Login successful!";
+
+            message.style.color =
+                "#4ade80";
+
+
+            setTimeout(
+                function () {
+
+                    window.location.replace(
+                        "index.html"
+                    );
+
+                },
+                500
             );
 
-        }, 500);
 
-    } catch (error) {
+        } catch (error) {
 
-        console.error(error);
+            console.error(
+                "Login error:",
+                error
+            );
 
-        message.textContent =
-            "Unable to connect to the server.";
 
-        message.style.color = "#ff6b6b";
+            message.textContent =
+                "Unable to connect to the server.";
 
-        loginButton.disabled = false;
-        loginButton.textContent = "Login";
+            message.style.color =
+                "#ff6b6b";
+
+
+            loginButton.disabled =
+                false;
+
+            loginButton.textContent =
+                "Login";
+        }
     }
-});
+);

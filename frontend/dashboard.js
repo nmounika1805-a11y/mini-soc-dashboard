@@ -1,5 +1,13 @@
+/* =========================================
+   API CONFIGURATION
+========================================= */
+
 const API_BASE =
-    "http://127.0.0.1:8080/api";
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+        ? "http://127.0.0.1:8080/api"
+        : "https://mini-soc-security.onrender.com/api";
+
 
 let alerts = [];
 let currentUser = null;
@@ -1252,39 +1260,42 @@ function isAdmin() {
    OPEN ADD ALERT
 ========================================= */
 
-addAlertButton.addEventListener(
-    "click",
-    function () {
+if (addAlertButton) {
 
-        if (!isAdmin()) {
-            return;
+    addAlertButton.addEventListener(
+        "click",
+        function () {
+
+            if (!isAdmin()) {
+                return;
+            }
+
+
+            alertForm.reset();
+
+
+            document.getElementById(
+                "alertId"
+            ).value = "";
+
+
+            modalTitle.textContent =
+                "Add Alert";
+
+
+            modalMessage.textContent =
+                "";
+
+            modalMessage.style.color =
+                "";
+
+
+            alertModal.classList.remove(
+                "hidden"
+            );
         }
-
-
-        alertForm.reset();
-
-
-        document.getElementById(
-            "alertId"
-        ).value = "";
-
-
-        modalTitle.textContent =
-            "Add Alert";
-
-
-        modalMessage.textContent =
-            "";
-
-        modalMessage.style.color =
-            "";
-
-
-        alertModal.classList.remove(
-            "hidden"
-        );
-    }
-);
+    );
+}
 
 
 /* =========================================
@@ -1380,120 +1391,69 @@ function editAlert(id) {
    SAVE ALERT
 ========================================= */
 
-alertForm.addEventListener(
-    "submit",
-    async function (event) {
+if (alertForm) {
 
-        event.preventDefault();
+    alertForm.addEventListener(
+        "submit",
+        async function (event) {
 
-
-        if (!isAdmin()) {
-            return;
-        }
+            event.preventDefault();
 
 
-        const id =
-            document.getElementById(
-                "alertId"
-            ).value;
+            if (!isAdmin()) {
+                return;
+            }
 
 
-        const alertData = {
-
-            title:
+            const id =
                 document.getElementById(
-                    "alertTitle"
-                ).value.trim(),
-
-            severity:
-                document.getElementById(
-                    "alertSeverity"
-                ).value,
-
-            status:
-                document.getElementById(
-                    "alertStatus"
-                ).value,
-
-            sourceIp:
-                document.getElementById(
-                    "sourceIp"
-                ).value.trim(),
-
-            destinationIp:
-                document.getElementById(
-                    "destinationIp"
-                ).value.trim(),
-
-            description:
-                document.getElementById(
-                    "alertDescription"
-                ).value.trim(),
-
-            note:
-                document.getElementById(
-                    "alertNote"
-                ).value.trim()
-        };
+                    "alertId"
+                ).value;
 
 
-        if (!alertData.title) {
+            const alertData = {
 
-            modalMessage.textContent =
-                "Alert title is required.";
+                title:
+                    document.getElementById(
+                        "alertTitle"
+                    ).value.trim(),
 
-            modalMessage.style.color =
-                "#ff5c73";
+                severity:
+                    document.getElementById(
+                        "alertSeverity"
+                    ).value,
 
-            return;
-        }
+                status:
+                    document.getElementById(
+                        "alertStatus"
+                    ).value,
 
+                sourceIp:
+                    document.getElementById(
+                        "sourceIp"
+                    ).value.trim(),
 
-        const method =
-            id
-                ? "PUT"
-                : "POST";
+                destinationIp:
+                    document.getElementById(
+                        "destinationIp"
+                    ).value.trim(),
 
+                description:
+                    document.getElementById(
+                        "alertDescription"
+                    ).value.trim(),
 
-        const url =
-            id
-                ? `${API_BASE}/alerts/${id}`
-                : `${API_BASE}/alerts`;
-
-
-        try {
-
-            const response =
-                await fetch(
-                    url,
-                    {
-                        method,
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        credentials:
-                            "include",
-
-                        body:
-                            JSON.stringify(
-                                alertData
-                            )
-                    }
-                );
+                note:
+                    document.getElementById(
+                        "alertNote"
+                    ).value.trim()
+            };
 
 
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
+            if (!alertData.title) {
 
                 modalMessage.textContent =
-                    data.message ||
-                    "Unable to save alert.";
+                    "Alert title is required.";
 
                 modalMessage.style.color =
                     "#ff5c73";
@@ -1502,28 +1462,82 @@ alertForm.addEventListener(
             }
 
 
-            alertModal.classList.add(
-                "hidden"
-            );
+            const method =
+                id
+                    ? "PUT"
+                    : "POST";
 
 
-            await loadAlerts();
+            const url =
+                id
+                    ? `${API_BASE}/alerts/${id}`
+                    : `${API_BASE}/alerts`;
 
-        } catch (error) {
 
-            console.error(
-                "Save alert error:",
-                error
-            );
+            try {
 
-            modalMessage.textContent =
-                "Unable to connect to the server.";
+                const response =
+                    await fetch(
+                        url,
+                        {
+                            method,
 
-            modalMessage.style.color =
-                "#ff5c73";
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            credentials:
+                                "include",
+
+                            body:
+                                JSON.stringify(
+                                    alertData
+                                )
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    modalMessage.textContent =
+                        data.message ||
+                        "Unable to save alert.";
+
+                    modalMessage.style.color =
+                        "#ff5c73";
+
+                    return;
+                }
+
+
+                alertModal.classList.add(
+                    "hidden"
+                );
+
+
+                await loadAlerts();
+
+            } catch (error) {
+
+                console.error(
+                    "Save alert error:",
+                    error
+                );
+
+                modalMessage.textContent =
+                    "Unable to connect to the server.";
+
+                modalMessage.style.color =
+                    "#ff5c73";
+            }
         }
-    }
-);
+    );
+}
 
 
 /* =========================================
@@ -1595,85 +1609,113 @@ async function deleteAlert(id) {
    LOGOUT
 ========================================= */
 
-logoutButton.addEventListener(
-    "click",
-    async function () {
+if (logoutButton) {
 
-        logoutButton.disabled =
-            true;
+    logoutButton.addEventListener(
+        "click",
+        async function () {
 
-        logoutButton.textContent =
-            "Logging out...";
+            logoutButton.disabled =
+                true;
+
+            logoutButton.textContent =
+                "Logging out...";
 
 
-        try {
+            try {
 
-            await fetch(
-                `${API_BASE}/auth/logout`,
-                {
-                    method: "POST",
-                    credentials: "include"
-                }
-            );
+                await fetch(
+                    `${API_BASE}/auth/logout`,
+                    {
+                        method: "POST",
+                        credentials: "include"
+                    }
+                );
 
-        } catch (error) {
+            } catch (error) {
 
-            console.error(
-                "Logout error:",
-                error
-            );
+                console.error(
+                    "Logout error:",
+                    error
+                );
 
-        } finally {
+            } finally {
 
-            window.location.replace(
-                "login.html"
-            );
+                window.location.replace(
+                    "login.html"
+                );
+            }
         }
-    }
-);
+    );
+}
 
 
 /* =========================================
    CLOSE MODALS
 ========================================= */
 
-document.getElementById(
-    "closeModalButton"
-).addEventListener(
-    "click",
-    closeAlertModal
-);
+const closeModalButton =
+    document.getElementById(
+        "closeModalButton"
+    );
+
+const cancelModalButton =
+    document.getElementById(
+        "cancelModalButton"
+    );
+
+const closeViewButton =
+    document.getElementById(
+        "closeViewButton"
+    );
 
 
-document.getElementById(
-    "cancelModalButton"
-).addEventListener(
-    "click",
-    closeAlertModal
-);
+if (closeModalButton) {
+
+    closeModalButton.addEventListener(
+        "click",
+        closeAlertModal
+    );
+}
 
 
-document.getElementById(
-    "closeViewButton"
-).addEventListener(
-    "click",
-    closeViewModal
-);
+if (cancelModalButton) {
+
+    cancelModalButton.addEventListener(
+        "click",
+        closeAlertModal
+    );
+}
+
+
+if (closeViewButton) {
+
+    closeViewButton.addEventListener(
+        "click",
+        closeViewModal
+    );
+}
 
 
 function closeAlertModal() {
 
-    alertModal.classList.add(
-        "hidden"
-    );
+    if (alertModal) {
+
+        alertModal.classList.add(
+            "hidden"
+        );
+    }
 }
 
 
 function closeViewModal() {
 
-    viewModal.classList.add(
-        "hidden"
-    );
+    if (viewModal) {
+
+        viewModal.classList.add(
+            "hidden"
+        );
+    }
 }
 
 
@@ -1681,34 +1723,40 @@ function closeViewModal() {
    OUTSIDE CLICK
 ========================================= */
 
-alertModal.addEventListener(
-    "click",
-    function (event) {
+if (alertModal) {
 
-        if (
-            event.target ===
-            alertModal
-        ) {
+    alertModal.addEventListener(
+        "click",
+        function (event) {
 
-            closeAlertModal();
+            if (
+                event.target ===
+                alertModal
+            ) {
+
+                closeAlertModal();
+            }
         }
-    }
-);
+    );
+}
 
 
-viewModal.addEventListener(
-    "click",
-    function (event) {
+if (viewModal) {
 
-        if (
-            event.target ===
-            viewModal
-        ) {
+    viewModal.addEventListener(
+        "click",
+        function (event) {
 
-            closeViewModal();
+            if (
+                event.target ===
+                viewModal
+            ) {
+
+                closeViewModal();
+            }
         }
-    }
-);
+    );
+}
 
 
 /* =========================================
@@ -1735,22 +1783,31 @@ document.addEventListener(
    FILTER EVENTS
 ========================================= */
 
-searchInput.addEventListener(
-    "input",
-    renderAlerts
-);
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        renderAlerts
+    );
+}
 
 
-severityFilter.addEventListener(
-    "change",
-    renderAlerts
-);
+if (severityFilter) {
+
+    severityFilter.addEventListener(
+        "change",
+        renderAlerts
+    );
+}
 
 
-statusFilter.addEventListener(
-    "change",
-    renderAlerts
-);
+if (statusFilter) {
+
+    statusFilter.addEventListener(
+        "change",
+        renderAlerts
+    );
+}
 
 
 /* =========================================
