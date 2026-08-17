@@ -1,3 +1,4 @@
+
 package com.minisoc.backend.controller;
 
 import com.minisoc.backend.model.Alert;
@@ -20,7 +21,8 @@ import java.util.Map;
 @CrossOrigin(
         origins = {
                 "http://localhost:5500",
-                "http://127.0.0.1:5500"
+                "http://127.0.0.1:5500",
+                "https://mini-soc-frontendddd.onrender.com"
         },
         allowCredentials = "true"
 )
@@ -67,11 +69,17 @@ public class AlertController {
         }
 
         alert.setTitle(alert.getTitle().trim());
+
         alert.setSeverity(
-                alert.getSeverity().trim().toUpperCase()
+                alert.getSeverity()
+                        .trim()
+                        .toUpperCase()
         );
+
         alert.setStatus(
-                alert.getStatus().trim().toUpperCase()
+                alert.getStatus()
+                        .trim()
+                        .toUpperCase()
         );
 
         alert.setDescription(
@@ -111,7 +119,9 @@ public class AlertController {
         }
 
         Alert existing =
-                alertRepository.findById(id).orElse(null);
+                alertRepository
+                        .findById(id)
+                        .orElse(null);
 
         if (existing == null) {
             return ResponseEntity
@@ -192,6 +202,7 @@ public class AlertController {
     }
 
     private boolean isLoggedIn(HttpSession session) {
+
         return session.getAttribute("userId") != null;
     }
 
@@ -258,3 +269,4 @@ public class AlertController {
         return response;
     }
 }
+
