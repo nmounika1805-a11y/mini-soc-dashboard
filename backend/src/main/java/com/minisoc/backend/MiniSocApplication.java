@@ -22,31 +22,60 @@ public class MiniSocApplication {
     }
 
     @Bean
-    CommandLineRunner createDefaultAdmin(
+    CommandLineRunner setupAdmin(
             UserRepository userRepository,
             BCryptPasswordEncoder passwordEncoder) {
 
         return args -> {
 
-            String adminEmail = "admin@minisoc.com";
+            String adminEmail = "monaco@testt.com";
 
-            if (!userRepository.existsByEmailIgnoreCase(adminEmail)) {
+            User admin = userRepository
+                    .findByEmailIgnoreCase(adminEmail)
+                    .orElse(null);
 
-                User admin = new User();
+            if (admin != null) {
 
-                admin.setName("SOC Administrator");
-                admin.setEmail(adminEmail);
-                admin.setPassword(
-                        passwordEncoder.encode("Admin@123")
-                );
+                admin.setName("Mounika");
                 admin.setRole("ADMIN");
+
+                /*
+                 * Keep the existing password if the account
+                 * was registered through the website.
+                 *
+                 * We don't overwrite it here.
+                 */
 
                 userRepository.save(admin);
 
                 System.out.println("======================================");
-                System.out.println("DEFAULT ADMIN CREATED");
-                System.out.println("Email: admin@minisoc.com");
-                System.out.println("Password: Admin@123");
+                System.out.println("ADMIN ACCOUNT READY");
+                System.out.println("Name: Mounika");
+                System.out.println("Email: monaco@testt.com");
+                System.out.println("Role: ADMIN");
+                System.out.println("======================================");
+
+            } else {
+
+                /*
+                 * If the account does not exist, create it.
+                 */
+
+                User newAdmin = new User();
+
+                newAdmin.setName("Mounika");
+                newAdmin.setEmail(adminEmail);
+                newAdmin.setPassword(
+                        passwordEncoder.encode("mouni@0910")
+                );
+                newAdmin.setRole("ADMIN");
+
+                userRepository.save(newAdmin);
+
+                System.out.println("======================================");
+                System.out.println("ADMIN ACCOUNT CREATED");
+                System.out.println("Name: Mounika");
+                System.out.println("Email: monaco@testt.com");
                 System.out.println("======================================");
             }
         };
